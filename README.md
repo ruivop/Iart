@@ -1,6 +1,6 @@
 # Iart
 Este é o repositório do trabalho da disciplina de iart (feup).
-O objetivo é conceber uma algoritmo minimax (alpha beta) que permita jogar [Whirlwind] (https://boardgamegeek.com/boardgame/159022/whirlwind).
+O objetivo é conceber uma algoritmo minimax (alpha beta) que permita jogar [Whirlwind](https://boardgamegeek.com/boardgame/159022/whirlwind).
 
 ## Jogo
 
