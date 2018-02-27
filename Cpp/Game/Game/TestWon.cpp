@@ -3,101 +3,224 @@
 
 using namespace std;
 
-vector<int*>* visitedaa = new vector<int*>(BSIZE*BSIZE);
+bool** visited = new bool*[BSIZE];
+unsigned char** unvisited = new unsigned char*[BSIZE * BSIZE];
+int unvisitedPivot = 0;
+int unvisitedLast = 0;
 
-bool checkIfHas(vector<int*>* v, unsigned char y, unsigned char x) {
-	for (size_t i = 0; i < v->size(); i++) {
-		if ((*v)[i][0] == y && (*v)[i][1] == x) {
-			return true;
-		}
-	}
-	return false;
-}
-
-vector<int*>* findReach(unsigned char** board, unsigned char y, unsigned char x) {
-	//alocate memory for the visited
-	vector<int*>* visited = new vector<int*>();
-
-
-	queue<unsigned char*> unvisited;
-	unsigned char* ss = new unsigned char[2];
-	ss[0] = y;
-	ss[1] = x;
-
-	unvisited.push(ss);
-
-	while (!unvisited.empty()) {
-		unsigned char* a = unvisited.front();
-
-		if (!checkIfHas(visited, a[0] + 1, a[1]) && a[0] + 1 < BSIZE && board[a[0] + 1][a[1]] == board[y][x]) {
-			unsigned char* sss = new unsigned char[2];
-			sss[0] = a[0] + 1;
-			sss[1] = a[1];
-			unvisited.push(sss);
-		}
-		if (!checkIfHas(visited, a[0] - 1, a[1]) && a[0] - 1 >= 0 && board[a[0] - 1][a[1]] == board[y][x]) {
-			unsigned char* sss = new unsigned char[2];
-			sss[0] = a[0] - 1;
-			sss[1] = a[1];
-			unvisited.push(sss);
-		}
-		if (!checkIfHas(visited, a[0], a[1] + 1) && a[1] + 1 < BSIZE && board[a[0]][a[1] + 1] == board[y][x]) {
-			unsigned char* sss = new unsigned char[2];
-			sss[0] = a[0];
-			sss[1] = a[1] + 1;
-			unvisited.push(sss);
-		}
-		if (!checkIfHas(visited, a[0], a[1] - 1) && a[1] - 1 >= 0 && board[a[0]][a[1] - 1] == board[y][x]) {
-			unsigned char* sss = new unsigned char[2];
-			sss[0] = a[0];
-			sss[1] = a[1] - 1;
-			unvisited.push(sss);
-		}
-		int* e = new int[2];
-		e[0] = a[0];
-		e[1] = a[1];
-		visited->push_back(e);
-		delete[] a;
-		unvisited.pop();
-	}
-	return visited;
-}
-
-bool hasTopToBotom(vector<int*>* visited)
+void initilizeTestWon()
 {
-	bool hastop = false;
-	bool hasbotom = false;
-	for (size_t i = 0; i < visited->size(); i++)
+	for (int i = 0; i < BSIZE; ++i)
+		visited[i] = new bool[BSIZE];
+
+	for (int i = 0; i < BSIZE * BSIZE; ++i)
+		unvisited[i] = new unsigned char[2];
+
+	initilizeVisited();
+	initilizeUnvisited();
+}
+
+void initilizeVisited()
+{
+	for (size_t i = 0; i < BSIZE; i++)
 	{
-		if ((*visited)[i][0] == 0)
+		for (size_t j = 0; j < BSIZE; j++)
 		{
-			hastop = true;
-		}
-		else if ((*visited)[i][0] == BSIZE - 1)
-		{
-			hasbotom = true;
+			if(visited[i][j])
+				visited[i][j] = false;
 		}
 	}
-	if (hasbotom && hastop)
-		return true;
-	else
-		return false;
 }
 
-bool hasWon(unsigned char** board, unsigned char piece)
-{
-	vector<int*>* visited = new vector<int*>();
+void initilizeUnvisited(){
+	for (size_t i = 0; i < BSIZE * BSIZE; i++)
+	{
+		if(unvisited[i][0] != 4)
+		{
+			unvisited[i][0] = 4;
+			unvisited[i][1] = 4;
+		}
+	}
+	unvisitedPivot = 0;
+	unvisitedLast = 0;
+}
+
+void reInUnvisited() {
+	for (size_t i = 0; i <= unvisitedLast; i++)
+	{
+		unvisited[i][0] = 4;
+		unvisited[i][1] = 4;
+	}
+	unvisitedPivot = 0;
+	unvisitedLast = 0;
+}
+
+
+bool checkIfHas(unsigned char y, unsigned char x) {
+	return visited[y][x];
+}
+
+bool findReach(unsigned char** board, unsigned char y, unsigned char x) {
+	bool hasTop = false;
+	bool hasBotom = false;
+
+	unvisited[unvisitedPivot][0] = y;
+	unvisited[unvisitedPivot][1] = x;
+	visited[y][x] = true;
+
+	//unvisitedLast + 1 is the size of the unvisited
+	while (unvisitedPivot != unvisitedLast + 1) {
+		unsigned char* a = unvisited[unvisitedPivot];
+
+		if (a[0] + 1 < BSIZE && !checkIfHas(a[0] + 1, a[1]) && board[a[0] + 1][a[1]] == board[y][x]) {
+			visited[a[0]+1][a[1]] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0] + 1;
+			unvisited[unvisitedLast][1] = a[1];
+		}
+		if (a[0] - 1 >= 0 && !checkIfHas(a[0] - 1, a[1]) && board[a[0] - 1][a[1]] == board[y][x]) {
+			visited[a[0] -1][a[1]] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0] - 1;
+			unvisited[unvisitedLast][1] = a[1];
+		}
+		if (a[1] + 1 < BSIZE && !checkIfHas(a[0], a[1] + 1) && board[a[0]][a[1] + 1] == board[y][x]) {
+			visited[a[0]][a[1]+1] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0];
+			unvisited[unvisitedLast][1] = a[1] + 1;
+		}
+		if (a[1] - 1 >= 0 && !checkIfHas(a[0], a[1] - 1) && board[a[0]][a[1] - 1] == board[y][x]) {
+			visited[a[0]][a[1]-1] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0];
+			unvisited[unvisitedLast][1] = a[1] - 1;
+		}
+		if (a[0] == 0) 
+			hasTop = true;
+		if (a[0] == BSIZE - 1)
+			hasBotom = true;
+		unvisitedPivot++;
+	}
+	return hasBotom && hasTop;
+}
+
+bool hasWon(unsigned char** board, unsigned char piece) {
 	for (size_t i = 0; i < BSIZE; i++) {
 		for (size_t j = 0; j < BSIZE; j++) {
-			if (board[i][j] == piece && !checkIfHas(visited, i, j)) {
-				vector<int*>* ve = findReach(board, static_cast<unsigned char>(i), static_cast<unsigned char>(j));
-				visited->insert(visited->end(), ve->begin(), ve->end());
-				if (hasTopToBotom(ve))
+			if (board[i][j] == piece && !checkIfHas(i, j)) {
+				if(findReach(board, static_cast<unsigned char>(i), static_cast<unsigned char>(j))) {
+					initilizeVisited();
+					reInUnvisited();
 					return true;
-				delete ve;
+				}
+				reInUnvisited();
 			}
 		}
 	}
-	delete visited;
+	initilizeVisited();
+	reInUnvisited();
 	return false;
+}
+
+
+
+
+
+
+int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
+	unsigned char ytopest = BSIZE;
+	unsigned char ybotomest = 0;
+	unsigned char xrigthes = 0;
+	unsigned char xleftest = BSIZE;
+	int diagonalPossibility = 0;
+
+	unsigned char piceToVisit = board[y][x];
+
+	unvisited[unvisitedPivot][0] = y;
+	unvisited[unvisitedPivot][1] = x;
+	visited[y][x] = true;
+
+	//unvisitedLast + 1 is the size of the unvisited
+	while (unvisitedPivot != unvisitedLast + 1) {
+		unsigned char* a = unvisited[unvisitedPivot];
+
+		if (a[0] + 1 < BSIZE && !checkIfHas(a[0] + 1, a[1]) && board[a[0] + 1][a[1]] == piceToVisit) {
+			visited[a[0] + 1][a[1]] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0] + 1;
+			unvisited[unvisitedLast][1] = a[1];
+		}
+		if (a[0] - 1 >= 0 && !checkIfHas(a[0] - 1, a[1]) && board[a[0] - 1][a[1]] == piceToVisit) {
+			visited[a[0] - 1][a[1]] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0] - 1;
+			unvisited[unvisitedLast][1] = a[1];
+		}
+		if (a[1] + 1 < BSIZE && !checkIfHas(a[0], a[1] + 1) && board[a[0]][a[1] + 1] == piceToVisit) {
+			visited[a[0]][a[1] + 1] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0];
+			unvisited[unvisitedLast][1] = a[1] + 1;
+		}
+		if (a[1] - 1 >= 0 && !checkIfHas(a[0], a[1] - 1) && board[a[0]][a[1] - 1] == piceToVisit) {
+			visited[a[0]][a[1] - 1] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0];
+			unvisited[unvisitedLast][1] = a[1] - 1;
+		}
+		unvisitedPivot++;
+	}
+	int together = unvisitedLast + 1;
+
+	unvisitedPivot = 0;
+
+	while (unvisitedPivot != unvisitedLast + 1) {
+		unsigned char* a = unvisited[unvisitedPivot];
+
+		if (a[0] + 1 < BSIZE && a[1] + 1 < BSIZE && !checkIfHas(a[0] + 1, a[1] + 1) && board[a[0] + 1][a[1] + 1] == piceToVisit) {
+			if (board[a[0]][a[1] + 1] == EMPTY && board[a[0] + 1][a[1]] == EMPTY)
+				diagonalPossibility++;
+		}
+		if (a[0] + 1 < BSIZE && a[1] - 1 >= 0 && !checkIfHas(a[0] + 1, a[1] - 1) && board[a[0] + 1][a[1] - 1] == piceToVisit) {
+			if (board[a[0]][a[1] - 1] == EMPTY && board[a[0] + 1][a[1]] == EMPTY)
+				diagonalPossibility++;
+		}
+		if (a[0] - 1 >= 0 && a[1] + 1 < BSIZE && !checkIfHas(a[0] - 1, a[1] + 1) && board[a[0] - 1][a[1] + 1] == piceToVisit) {
+			if (board[a[0]][a[1] + 1] == EMPTY && board[a[0] - 1][a[1]] == EMPTY)
+				diagonalPossibility++;
+		}
+		if (a[0] - 1 >= 0 && a[1] - 1 >= 0 && !checkIfHas(a[0] - 1, a[1] - 1) && board[a[0] - 1][a[1] - 1] == piceToVisit) {
+			if (board[a[0]][a[1] - 1] == EMPTY && board[a[0] - 1][a[1]] == EMPTY)
+				diagonalPossibility++;
+		}
+		ytopest = min(ytopest, a[0]);
+		ybotomest = max(ybotomest, a[0]);
+		xrigthes = max(xrigthes, a[1]);
+		xleftest = min(xleftest, a[1]);
+		unvisitedPivot++;
+	}
+	
+	int ret = together*FACTORTOGHETHER +
+		(ybotomest - ytopest)*FACTORHEIGHT +
+		(xrigthes - xleftest)*FACTORLENGTH +
+		diagonalPossibility*FACTORDIAGONALPOSS;
+
+	return ret;
+}
+
+
+int avalia(unsigned char** board, unsigned char piece) {
+	int acm = 0;
+	for (size_t i = 0; i < BSIZE; i++) {
+		for (size_t j = 0; j < BSIZE; j++) {
+			if (board[i][j] == piece && !checkIfHas(i, j)) {
+				acm += evaluateReach(board, static_cast<unsigned char>(i), static_cast<unsigned char>(j));
+				reInUnvisited();
+			}
+		}
+	}
+	initilizeVisited();
+	reInUnvisited();
+	return acm;
 }
