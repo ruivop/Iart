@@ -46,11 +46,6 @@ void initilizeUnvisited(){
 }
 
 void reInUnvisited() {
-	for (size_t i = 0; i <= unvisitedLast; i++)
-	{
-		unvisited[i][0] = 4;
-		unvisited[i][1] = 4;
-	}
 	unvisitedPivot = 0;
 	unvisitedLast = 0;
 }
@@ -63,6 +58,8 @@ bool checkIfHas(unsigned char y, unsigned char x) {
 bool findReach(unsigned char** board, unsigned char y, unsigned char x) {
 	bool hasTop = false;
 	bool hasBotom = false;
+	bool hasRigth = false;
+	bool hasLeft = false;
 
 	unvisited[unvisitedPivot][0] = y;
 	unvisited[unvisitedPivot][1] = x;
@@ -98,11 +95,15 @@ bool findReach(unsigned char** board, unsigned char y, unsigned char x) {
 		}
 		if (a[0] == 0) 
 			hasTop = true;
-		if (a[0] == BSIZE - 1)
+		else if (a[0] == BSIZE - 1)
 			hasBotom = true;
+		if (a[1] == 0)
+			hasLeft = true;
+		else if (a[1] == BSIZE - 1)
+			hasRigth = true;
 		unvisitedPivot++;
 	}
-	return hasBotom && hasTop;
+	return board[y][x] == BLACKS ? hasBotom && hasTop : hasRigth && hasLeft;
 }
 
 bool hasWon(unsigned char** board, unsigned char piece) {
@@ -126,16 +127,9 @@ bool hasWon(unsigned char** board, unsigned char piece) {
 
 
 
-
-
-int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
-	unsigned char ytopest = BSIZE;
-	unsigned char ybotomest = 0;
-	unsigned char xrigthes = 0;
-	unsigned char xleftest = BSIZE;
-	int diagonalPossibility = 0;
-
-	unsigned char piceToVisit = board[y][x];
+void visitPos(unsigned char** board, const unsigned char y, const unsigned char x)
+{
+	const unsigned char piceToVisit = board[y][x];
 
 	unvisited[unvisitedPivot][0] = y;
 	unvisited[unvisitedPivot][1] = x;
@@ -169,31 +163,61 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 			unvisited[unvisitedLast][0] = a[0];
 			unvisited[unvisitedLast][1] = a[1] - 1;
 		}
+
+		if (a[0] + 1 < BSIZE && a[1] + 1 < BSIZE && !checkIfHas(a[0] + 1, a[1] + 1) && board[a[0] + 1][a[1] + 1] == piceToVisit) {
+			if (board[a[0]][a[1] + 1] == EMPTY && board[a[0] + 1][a[1]] == EMPTY) {
+				visited[a[0] + 1][a[1] + 1] = true;
+				unvisitedLast++;
+				unvisited[unvisitedLast][0] = a[0] + 1;
+				unvisited[unvisitedLast][1] = a[1] + 1;
+			}
+		}
+		if (a[0] + 1 < BSIZE && a[1] - 1 >= 0 && !checkIfHas(a[0] + 1, a[1] - 1) && board[a[0] + 1][a[1] - 1] == piceToVisit) {
+			if (board[a[0]][a[1] - 1] == EMPTY && board[a[0] + 1][a[1]] == EMPTY) {
+				visited[a[0] + 1][a[1] - 1] = true;
+				unvisitedLast++;
+				unvisited[unvisitedLast][0] = a[0] + 1;
+				unvisited[unvisitedLast][1] = a[1] - 1;
+			}
+		}
+		if (a[0] - 1 >= 0 && a[1] + 1 < BSIZE && !checkIfHas(a[0] - 1, a[1] + 1) && board[a[0] - 1][a[1] + 1] == piceToVisit) {
+			if (board[a[0]][a[1] + 1] == EMPTY && board[a[0] - 1][a[1]] == EMPTY) {
+				visited[a[0] - 1][a[1] + 1] = true;
+				unvisitedLast++;
+				unvisited[unvisitedLast][0] = a[0] - 1;
+				unvisited[unvisitedLast][1] = a[1] + 1;
+			}
+		}
+		if (a[0] - 1 >= 0 && a[1] - 1 >= 0 && !checkIfHas(a[0] - 1, a[1] - 1) && board[a[0] - 1][a[1] - 1] == piceToVisit) {
+			if (board[a[0]][a[1] - 1] == EMPTY && board[a[0] - 1][a[1]] == EMPTY)
+			{
+				visited[a[0] - 1][a[1] - 1] = true;
+				unvisitedLast++;
+				unvisited[unvisitedLast][0] = a[0] - 1;
+				unvisited[unvisitedLast][1] = a[1] - 1;
+			}
+		}
 		unvisitedPivot++;
 	}
-	int together = unvisitedLast + 1;
+	
+}
+
+int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
+	unsigned char ytopest = BSIZE;
+	unsigned char ybotomest = 0;
+	unsigned char xrigthes = 0;
+	unsigned char xleftest = BSIZE;
+
+
+	const unsigned char piceToVisit = board[y][x];
+
+	visitPos(board, y, x);
 
 	unvisitedPivot = 0;
 
 	while (unvisitedPivot != unvisitedLast + 1) {
 		unsigned char* a = unvisited[unvisitedPivot];
 
-		if (a[0] + 1 < BSIZE && a[1] + 1 < BSIZE && !checkIfHas(a[0] + 1, a[1] + 1) && board[a[0] + 1][a[1] + 1] == piceToVisit) {
-			if (board[a[0]][a[1] + 1] == EMPTY && board[a[0] + 1][a[1]] == EMPTY)
-				diagonalPossibility++;
-		}
-		if (a[0] + 1 < BSIZE && a[1] - 1 >= 0 && !checkIfHas(a[0] + 1, a[1] - 1) && board[a[0] + 1][a[1] - 1] == piceToVisit) {
-			if (board[a[0]][a[1] - 1] == EMPTY && board[a[0] + 1][a[1]] == EMPTY)
-				diagonalPossibility++;
-		}
-		if (a[0] - 1 >= 0 && a[1] + 1 < BSIZE && !checkIfHas(a[0] - 1, a[1] + 1) && board[a[0] - 1][a[1] + 1] == piceToVisit) {
-			if (board[a[0]][a[1] + 1] == EMPTY && board[a[0] - 1][a[1]] == EMPTY)
-				diagonalPossibility++;
-		}
-		if (a[0] - 1 >= 0 && a[1] - 1 >= 0 && !checkIfHas(a[0] - 1, a[1] - 1) && board[a[0] - 1][a[1] - 1] == piceToVisit) {
-			if (board[a[0]][a[1] - 1] == EMPTY && board[a[0] - 1][a[1]] == EMPTY)
-				diagonalPossibility++;
-		}
 		ytopest = min(ytopest, a[0]);
 		ybotomest = max(ybotomest, a[0]);
 		xrigthes = max(xrigthes, a[1]);
@@ -201,11 +225,11 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 		unvisitedPivot++;
 	}
 	
-	int ret = together*FACTORTOGHETHER +
-		(ybotomest - ytopest)*FACTORHEIGHT +
-		(xrigthes - xleftest)*FACTORLENGTH +
-		diagonalPossibility*FACTORDIAGONALPOSS;
+	int ret = pow((ybotomest - ytopest)*FACTORHEIGHT, EXPFACTOR) +
+		pow((xrigthes - xleftest)*FACTORLENGTH, EXPFACTOR);
 
+	if (piceToVisit == WHITES)
+		ret = -ret;
 	return ret;
 }
 
@@ -214,7 +238,7 @@ int avalia(unsigned char** board, unsigned char piece) {
 	int acm = 0;
 	for (size_t i = 0; i < BSIZE; i++) {
 		for (size_t j = 0; j < BSIZE; j++) {
-			if (board[i][j] == piece && !checkIfHas(i, j)) {
+			if (board[i][j] != EMPTY && !checkIfHas(i, j)) {
 				acm += evaluateReach(board, static_cast<unsigned char>(i), static_cast<unsigned char>(j));
 				reInUnvisited();
 			}
@@ -222,5 +246,7 @@ int avalia(unsigned char** board, unsigned char piece) {
 	}
 	initilizeVisited();
 	reInUnvisited();
+	if (piece == WHITES)
+		acm = -acm;
 	return acm;
 }

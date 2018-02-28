@@ -1,27 +1,46 @@
 #include "stdafx.h"
 #include "testAvalia.h"
 
-void initializeEvalB(unsigned char b[BSIZE][BSIZE], unsigned char** board)
+unsigned char** testBoard = new unsigned char*[TESTBSIZE];
+
+
+void initializeEvalB(unsigned char b[TESTBSIZE][TESTBSIZE], unsigned char** board)
 {
-	for (size_t i = 0; i < BSIZE; i++)
+	for (size_t i = 0; i < TESTBSIZE; i++)
 	{
-		for (size_t j = 0; j < BSIZE; j++)
+		for (size_t j = 0; j < TESTBSIZE; j++)
 		{
 			board[i][j] = b[i][j];
 		}
 	}
 }
 
+bool testeAval(unsigned char b[TESTBSIZE][TESTBSIZE], const int test_num, const int height, const int length)
+{
+	int eval = static_cast<int>(pow(height * FACTORHEIGHT, EXPFACTOR) +
+		pow(length * FACTORLENGTH, EXPFACTOR));
+
+	initializeEvalB(b, testBoard);
+	bool ret = (avalia(testBoard, 1) == eval);
+
+	if (!ret)
+	{
+		cout << "error in test " << test_num << " expected: " << eval << " given: " << avalia(testBoard, 1) << endl;
+	}
+	return ret;
+}
+
 void testAvalia() {
-	unsigned char** board = new unsigned char*[BSIZE];
-	for (int i = 0; i < BSIZE; ++i)
-		board[i] = new unsigned char[BSIZE];
+
+	for (int i = 0; i < TESTBSIZE; ++i)
+		testBoard[i] = new unsigned char[TESTBSIZE];
+
 	int sucsees = 0;
 	int unsucsess = 0;
-	int avaliacao;
+
 	cout << "testes da avaliacao do tabuleiro: " << endl;
 
-	unsigned char b1[BSIZE][BSIZE] =
+	unsigned char b1[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -37,17 +56,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b1, board);
-	avaliacao = 1 * FACTORTOGHETHER;
-	if (avalia(board, 1) == avaliacao) 
+	if (testeAval(b1, 1, 0, 0))
 		sucsees++;
-	else {
-		cout << "error in test " << 1 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b2[BSIZE][BSIZE] =
+	unsigned char b2[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -63,17 +78,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b2, board);
-	avaliacao = 2 * FACTORTOGHETHER + 1 * FACTORHEIGHT;
-	if (avalia(board, 1) == avaliacao)
+	if (testeAval(b2, 2, 1, 0))
 		sucsees++;
-	else {
-		cout << "error in test " << 2 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b3[BSIZE][BSIZE] =
+	unsigned char b3[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -89,17 +100,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b3, board);
-	avaliacao = 3 * FACTORTOGHETHER + 2 * FACTORHEIGHT;
-	if (avalia(board, 1) == avaliacao)
+	if (testeAval(b3, 3, 2, 0))
 		sucsees++;
-	else {
-		cout << "error in test " << 3 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b4[BSIZE][BSIZE] =
+	unsigned char b4[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -115,17 +122,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b4, board);
-	avaliacao = 2 * FACTORTOGHETHER + 1 * FACTORLENGTH;
-	if (avalia(board, 1) == avaliacao)
+	if (testeAval(b4, 4, 0, 1))
 		sucsees++;
-	else {
-		cout << "error in test " << 4 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 	
-	unsigned char b5[BSIZE][BSIZE] =
+	unsigned char b5[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -141,17 +144,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b5, board);
-	avaliacao = 3 * FACTORTOGHETHER + 2 * FACTORLENGTH;
-	if (avalia(board, 1) == avaliacao)
+	if (testeAval(b5, 5, 0, 2))
 		sucsees++;
-	else {
-		cout << "error in test " << 5 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b6[BSIZE][BSIZE] =
+	unsigned char b6[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -167,17 +166,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b6, board);
-	avaliacao = 3 * FACTORTOGHETHER + 1 * FACTORHEIGHT + 1 * FACTORLENGTH;
-	if (avalia(board, 1) == avaliacao)
+	if (testeAval(b6, 6, 1, 1))
 		sucsees++;
-	else {
-		cout << "error in test " << 6 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b7[BSIZE][BSIZE] =
+	unsigned char b7[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -193,17 +188,12 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b7, board);
-	avaliacao = 2 * FACTORTOGHETHER + 0 * FACTORHEIGHT + 0 * FACTORLENGTH + 1 * FACTORDIAGONALPOSS;
-	if (avalia(board, 1) == avaliacao) {
+	if (testeAval(b7, 7, 1, 1))
 		sucsees++;
-	}
-	else {
-		cout << "error in test " << 7 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
-	unsigned char b8[BSIZE][BSIZE] =
+	unsigned char b8[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -219,18 +209,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b8, board);
-	avaliacao = 4 * FACTORTOGHETHER + 2 * FACTORHEIGHT + 1 * FACTORLENGTH + 0 * FACTORDIAGONALPOSS;
-	if (avalia(board, 1) == avaliacao) {
+	if (testeAval(b8, 8, 2, 1))
 		sucsees++;
-	}
-	else {
-		cout << "error in test " << 8 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 	
 	
-	unsigned char b9[BSIZE][BSIZE] =
+	unsigned char b9[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -246,18 +231,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b9, board);
-	avaliacao = 3 * FACTORTOGHETHER + 0 * FACTORHEIGHT + 0 * FACTORLENGTH + 2 * FACTORDIAGONALPOSS;
-	if (avalia(board, 1) == avaliacao) {
+	if (testeAval(b9, 9, 2, 1))
 		sucsees++;
-	}
-	else {
-		cout << "error in test " << 9 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b10[BSIZE][BSIZE] =
+	unsigned char b10[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -273,18 +253,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b10, board);
-	avaliacao = 4 * FACTORTOGHETHER + 1 * FACTORHEIGHT + 1 * FACTORLENGTH + 1 * FACTORDIAGONALPOSS;
-	if (avalia(board, 1) == avaliacao) {
+	if (testeAval(b10, 10, 2, 1))
 		sucsees++;
-	}
-	else {
-		cout << "error in test " << 10 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b11[BSIZE][BSIZE] =
+	unsigned char b11[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -300,18 +275,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b11, board);
-	avaliacao = 5 * FACTORTOGHETHER + 2 * FACTORHEIGHT + 1 * FACTORLENGTH + 0 * FACTORDIAGONALPOSS;
-	if (avalia(board, 1) == avaliacao) {
+	if (testeAval(b11, 11, 2, 1))
 		sucsees++;
-	}
-	else {
-		cout << "error in test " << 11 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b12[BSIZE][BSIZE] =
+	unsigned char b12[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -327,18 +297,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b12, board);
-	avaliacao = 5 * FACTORTOGHETHER + 0 * FACTORHEIGHT + 0 * FACTORLENGTH + 4 * FACTORDIAGONALPOSS;
-	if (avalia(board, 1) == avaliacao) {
+	if (testeAval(b12, 12, 2, 2))
 		sucsees++;
-	}
-	else {
-		cout << "error in test " << 12 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b13[BSIZE][BSIZE] =
+	unsigned char b13[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -354,18 +319,13 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b13, board);
-	avaliacao = 6 * FACTORTOGHETHER + 2 * FACTORHEIGHT + 1 * FACTORLENGTH + 2 * FACTORDIAGONALPOSS;
-	if (avalia(board, 1) == avaliacao) {
+	if (testeAval(b13, 13, 2, 2))
 		sucsees++;
-	}
-	else {
-		cout << "error in test " << 13 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
 
-	unsigned char b14[BSIZE][BSIZE] =
+	unsigned char b14[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -381,16 +341,32 @@ void testAvalia() {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-	initializeEvalB(b14, board);
-	avaliacao = 6 * FACTORTOGHETHER + 1 * FACTORHEIGHT + 2 * FACTORLENGTH + 2 * FACTORDIAGONALPOSS;
-	if (avalia(board, 1) == avaliacao) {
+	if (testeAval(b14, 14, 2, 2))
 		sucsees++;
-	}
-	else {
-		cout << "error in test " << 14 << " expected: " << avaliacao << " given: " << avalia(board, 1) << endl;
+	else
 		unsucsess++;
-	}
 
+
+	unsigned char b15[TESTBSIZE][TESTBSIZE] =
+  { { 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0 },
+	{ 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1 },
+	{ 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0 },
+	{ 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0 },
+	{ 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0 },
+	{ 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0 },
+	{ 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2 },
+	{ 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0 },
+	{ 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0 },
+	{ 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
+	{ 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0 },
+	{ 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1 },
+	{ 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0 },
+	{ 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0 } };
+
+	if (testeAval(b15, 15, 0, 0))
+		sucsees++;
+	else
+		unsucsess++;
 
 	cout << "sucsess: " << sucsees << " unsucsess: " << unsucsess << endl;
 

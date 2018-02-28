@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "TestWonTest.h"
 
-void initializeB(unsigned char b[BSIZE][BSIZE], unsigned char** board)
+void initializeB(unsigned char b[TESTBSIZE][TESTBSIZE], unsigned char** board)
 {
-	for (size_t i = 0; i < BSIZE; i++)
+	for (size_t i = 0; i < TESTBSIZE; i++)
 	{
-		for (size_t j = 0; j < BSIZE; j++)
+		for (size_t j = 0; j < TESTBSIZE; j++)
 		{
 			board[i][j] = b[i][j];
 		}
@@ -15,7 +15,7 @@ void initializeB(unsigned char b[BSIZE][BSIZE], unsigned char** board)
 void testtestwon() {
 
 	cout << "testes do teste de tabuleiro ganho: " << endl;
-	unsigned char win1[BSIZE][BSIZE] =
+	unsigned char win1[TESTBSIZE][TESTBSIZE] =
    {{ 1, 2, 2, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0 },
 	{ 0, 2, 0, 1, 0, 0, 1, 1, 2, 0, 0, 0, 0, 1 },
 	{ 1, 0, 0, 0, 0, 2, 0, 1, 0, 0, 1, 0, 0, 0 },
@@ -31,7 +31,7 @@ void testtestwon() {
 	{ 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0 },
 	{ 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0 } };
 
-	unsigned char win2[BSIZE][BSIZE] =
+	unsigned char win2[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 2, 2, 1, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0 },
 	{ 1, 2, 0, 1, 1, 0, 1, 1, 2, 0, 0, 0, 0, 1 },
 	{ 1, 0, 0, 0, 0, 2, 0, 1, 0, 0, 1, 0, 0, 0 },
@@ -47,7 +47,7 @@ void testtestwon() {
 	{ 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0 },
 	{ 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0 } };
 
-	unsigned char win3[BSIZE][BSIZE] =
+	unsigned char win3[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 2, 2, 1, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0 },
 	{ 1, 2, 0, 1, 1, 0, 1, 1, 2, 0, 0, 0, 0, 1 },
 	{ 1, 0, 0, 0, 0, 2, 0, 1, 0, 0, 1, 0, 0, 0 },
@@ -63,7 +63,7 @@ void testtestwon() {
 	{ 1, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0 },
 	{ 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 } };
 
-	unsigned char lost1[BSIZE][BSIZE] =
+	unsigned char lost1[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 2, 2, 1, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0 },
 	{ 1, 2, 0, 1, 1, 0, 1, 1, 2, 0, 0, 0, 0, 1 },
 	{ 1, 0, 0, 0, 0, 2, 0, 1, 0, 0, 1, 0, 0, 0 },
@@ -79,7 +79,7 @@ void testtestwon() {
 	{ 1, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 } };
 
-	unsigned char test3[BSIZE][BSIZE] =
+	unsigned char test3[TESTBSIZE][TESTBSIZE] =
 	{ { 1, 2, 2, 1, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0 },
 	{ 1, 2, 0, 1, 1, 0, 1, 1, 2, 0, 0, 0, 0, 1 },
 	{ 1, 0, 0, 0, 0, 2, 0, 1, 0, 0, 1, 0, 0, 0 },
@@ -96,9 +96,9 @@ void testtestwon() {
 	{ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 } };
 
 
-	unsigned char** board = new unsigned char*[BSIZE];
-	for (int i = 0; i < BSIZE; ++i)
-		board[i] = new unsigned char[BSIZE];
+	unsigned char** board = new unsigned char*[TESTBSIZE];
+	for (int i = 0; i < TESTBSIZE; ++i)
+		board[i] = new unsigned char[TESTBSIZE];
 	int sucsees = 0;
 	int unsucsess = 0;
 
@@ -129,8 +129,8 @@ void testtestwon() {
 
 	initializeB(test3, board);
 	int hasWonTimes = 0;
-		for (size_t i = 0; i < BSIZE; i++) {
-			for (size_t j = 0; j < BSIZE; j++) {
+		for (size_t i = 0; i < TESTBSIZE; i++) {
+			for (size_t j = 0; j < TESTBSIZE; j++) {
 				if (board[i][j] == EMPTY) {
 					board[i][j] = MAXMIZEPLAYER;
 
