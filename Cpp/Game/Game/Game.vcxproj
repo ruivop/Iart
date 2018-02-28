@@ -148,10 +148,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="testAvalia.h" />
+    <ClInclude Include="TestWonTest.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TestWon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="testAvalia.cpp" />
+    <ClCompile Include="TestWonTest.cpp" />
+    <ClCompile Include="TestWon.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
