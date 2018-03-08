@@ -17,8 +17,8 @@ void initializeEvalB(unsigned char b[TESTBSIZE][TESTBSIZE], unsigned char** boar
 
 bool testeAval(unsigned char b[TESTBSIZE][TESTBSIZE], const int test_num, const int height, const int length)
 {
-	int eval = static_cast<int>(pow(height * FACTORHEIGHT, EXPFACTOR) +
-		pow(length * FACTORLENGTH, EXPFACTOR));
+	int eval = static_cast<int>(pow(height * FACTOROBJECTIVE, EXPFACTOR) +
+		pow(length * FACTORNONOBJECTIVE, EXPFACTOR));
 
 	initializeEvalB(b, testBoard);
 	bool ret = (avalia(testBoard, 1) == eval);

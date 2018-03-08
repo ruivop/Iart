@@ -225,11 +225,13 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 		unvisitedPivot++;
 	}
 	
-	int ret = pow((ybotomest - ytopest)*FACTORHEIGHT, EXPFACTOR) +
-		pow((xrigthes - xleftest)*FACTORLENGTH, EXPFACTOR);
-
-	if (piceToVisit == WHITES)
-		ret = -ret;
+	int ret;
+	if (piceToVisit == BLACKS)
+		ret = pow((ybotomest - ytopest)*FACTOROBJECTIVE, EXPFACTOR) +
+			pow((xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
+	else
+		ret = -(pow((ybotomest - ytopest)*FACTORNONOBJECTIVE, EXPFACTOR) +
+		pow((xrigthes - xleftest)*FACTOROBJECTIVE, EXPFACTOR));
 	return ret;
 }
 
