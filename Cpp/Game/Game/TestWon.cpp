@@ -163,40 +163,6 @@ void visitPos(unsigned char** board, const unsigned char y, const unsigned char 
 			unvisited[unvisitedLast][0] = a[0];
 			unvisited[unvisitedLast][1] = a[1] - 1;
 		}
-
-		if (a[0] + 1 < BSIZE && a[1] + 1 < BSIZE && !checkIfHas(a[0] + 1, a[1] + 1) && board[a[0] + 1][a[1] + 1] == piceToVisit) {
-			if (board[a[0]][a[1] + 1] == EMPTY && board[a[0] + 1][a[1]] == EMPTY) {
-				visited[a[0] + 1][a[1] + 1] = true;
-				unvisitedLast++;
-				unvisited[unvisitedLast][0] = a[0] + 1;
-				unvisited[unvisitedLast][1] = a[1] + 1;
-			}
-		}
-		if (a[0] + 1 < BSIZE && a[1] - 1 >= 0 && !checkIfHas(a[0] + 1, a[1] - 1) && board[a[0] + 1][a[1] - 1] == piceToVisit) {
-			if (board[a[0]][a[1] - 1] == EMPTY && board[a[0] + 1][a[1]] == EMPTY) {
-				visited[a[0] + 1][a[1] - 1] = true;
-				unvisitedLast++;
-				unvisited[unvisitedLast][0] = a[0] + 1;
-				unvisited[unvisitedLast][1] = a[1] - 1;
-			}
-		}
-		if (a[0] - 1 >= 0 && a[1] + 1 < BSIZE && !checkIfHas(a[0] - 1, a[1] + 1) && board[a[0] - 1][a[1] + 1] == piceToVisit) {
-			if (board[a[0]][a[1] + 1] == EMPTY && board[a[0] - 1][a[1]] == EMPTY) {
-				visited[a[0] - 1][a[1] + 1] = true;
-				unvisitedLast++;
-				unvisited[unvisitedLast][0] = a[0] - 1;
-				unvisited[unvisitedLast][1] = a[1] + 1;
-			}
-		}
-		if (a[0] - 1 >= 0 && a[1] - 1 >= 0 && !checkIfHas(a[0] - 1, a[1] - 1) && board[a[0] - 1][a[1] - 1] == piceToVisit) {
-			if (board[a[0]][a[1] - 1] == EMPTY && board[a[0] - 1][a[1]] == EMPTY)
-			{
-				visited[a[0] - 1][a[1] - 1] = true;
-				unvisitedLast++;
-				unvisited[unvisitedLast][0] = a[0] - 1;
-				unvisited[unvisitedLast][1] = a[1] - 1;
-			}
-		}
 		unvisitedPivot++;
 	}
 	

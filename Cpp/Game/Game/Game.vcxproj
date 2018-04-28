@@ -217,7 +217,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="NonRepeat.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="testAvalia.h" />
     <ClInclude Include="TestWonTest.h" />
@@ -227,7 +226,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="NonRepeat.cpp" />
     <ClCompile Include="testAvalia.cpp" />
     <ClCompile Include="TestWonTest.cpp" />
     <ClCompile Include="TestWon.cpp" />
