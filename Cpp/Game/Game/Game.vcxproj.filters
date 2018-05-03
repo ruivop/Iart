@@ -36,6 +36,12 @@
     <ClInclude Include="testAvalia.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="TestOredenate.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="Ordenate.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -51,6 +57,12 @@
       <Filter>Teste</Filter>
     </ClCompile>
     <ClCompile Include="testAvalia.cpp">
+      <Filter>Teste</Filter>
+    </ClCompile>
+    <ClCompile Include="Ordenate.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="TestOredenate.cpp">
       <Filter>Teste</Filter>
     </ClCompile>
   </ItemGroup>

@@ -181,7 +181,7 @@ class Game:
 class GameState():
 	def __init__(self, board, playerTurn):
 		self.board = board
-		self.pieces = {'1':'X', '0': '-', '-1':'O'}
+		self.pieces = {'1':'B', '0': '-', '-1':'W'}
 		self.playerTurn = playerTurn
 		self.binary = self._binary()
 		self.id = self._convertStateToId()
@@ -221,6 +221,9 @@ class GameState():
 		return id
 
 	def _checkForEndGame(self):
+		if np.count_nonzero(self.board) == 14*14:
+			return 1
+		
 		it = 0
 		visited = []
 		for value in self.board:
