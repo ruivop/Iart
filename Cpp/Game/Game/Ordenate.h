@@ -10,7 +10,7 @@ struct PossiblePlay
 	PossiblePlay * next_pos = nullptr;
 };*/
 
-int** avaliaBoard(unsigned char ** b);
-int** ordenate(unsigned char ** b, int depth);
+int** avaliaBoard(unsigned char ** b, unsigned char player);
+int** ordenate(unsigned char ** b, int depth, unsigned char player);
 void initializeOrdenate();
 int calcNumVizinhos(unsigned char ** board, int i, int j);

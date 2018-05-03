@@ -42,7 +42,7 @@ void get_next_pos(int depth, unsigned int l, unsigned int c)
 	while (orders[depth][indiceVisitando / BSIZE][indiceVisitando%BSIZE] != -1)
 	{
 		//se o score do que estamos a querer por for maior do que o que estamos a visitar, entao poe o que estamos querer por na posicao do que estamos a visitar
-		if (scores[l][c] >= scores[indiceVisitando / BSIZE][indiceVisitando%BSIZE])
+		if (scores[l][c] > scores[indiceVisitando / BSIZE][indiceVisitando%BSIZE])
 		{
 			//se o anterioir for igual a -1 e porque temos de por no primeiro valor
 			if (ant == -1) {
@@ -64,15 +64,16 @@ void get_next_pos(int depth, unsigned int l, unsigned int c)
 	orders[depth][l][c] = -1;
 }
 
-int** ordenate(unsigned char ** b, int depth)
+int** ordenate(unsigned char ** b, int depth, unsigned char player)
 {
-	int ** ret = avaliaBoard(b);
+	int ** ret = avaliaBoard(b, player);
 
 	for (unsigned int i = 0; i < BSIZE; i++) {
 		for (unsigned int j = 0; j < BSIZE; j++) {
 			orders[depth][i][j] = -1;
 		}
 	}
+	FirstOrders[depth] = -1;
 
 	for (unsigned int i = 0; i < BSIZE; i++) {
 		for (unsigned int j = 0; j < BSIZE; j++) {
@@ -82,30 +83,14 @@ int** ordenate(unsigned char ** b, int depth)
 			}
 		}
 	}
-
-	/*int indiceVisitando = FirstOrders[depth];
-
-	bool para = false;
-	if (FirstOrders[depth] == -1)
-		para = true;
-	while (!para)
-	{
-		cout << "   >" << (int)indiceVisitando / BSIZE << " - " << indiceVisitando % BSIZE << " s: " << scores[indiceVisitando / BSIZE][indiceVisitando%BSIZE];
-
-		if (orders[depth][indiceVisitando / BSIZE][indiceVisitando%BSIZE] != -1)
-			indiceVisitando = orders[depth][indiceVisitando / BSIZE][indiceVisitando%BSIZE];
-		else
-			para = true;
-	}
-	cout << endl;*/
 	return ret;
 }
 
-int** avaliaBoard(unsigned char ** b)
+int** avaliaBoard(unsigned char ** b, unsigned char player)
 {
 	for (size_t i = 0; i < BSIZE; i++) {
 		for (size_t j = 0; j < BSIZE; j++) {
-			if (b[i][j] == EMPTY)
+			if (b[i][j] == EMPTY && !isDiagnonalyAdj(b, i, j, player))
 			{
 				scores[i][j] = calcNumVizinhos(b, i, j);
 				scores[i][j] += ifNeibLastPlayed(i, j);
@@ -149,4 +134,17 @@ int ifNeibLastPlayed(unsigned char l, unsigned char c)
 	if (lastPlayed[0] == l && lastPlayed[1] - 1 == c)
 		return 6;
 	return 0;
+}
+
+
+bool isDiagnonalyAdj(unsigned char** board, int i, int j, unsigned char colour) {
+	if (i + 1 < BSIZE && j + 1 < BSIZE && board[i + 1][j + 1] == colour && board[i + 1][j] != colour && board[i][j + 1] != colour)
+		return true;
+	if (i + 1 < BSIZE && j - 1 >= 0 && board[i + 1][j - 1] == colour && board[i + 1][j] != colour && board[i][j - 1] != colour)
+		return true;
+	if (i - 1 >= 0 && j - 1 >= 0 && board[i - 1][j - 1] == colour && board[i - 1][j] != colour && board[i][j - 1] != colour)
+		return true;
+	if (i - 1 >= 0 && j + 1 < BSIZE && board[i - 1][j + 1] == colour && board[i - 1][j] != colour && board[i][j + 1] != colour)
+		return true;
+	return false;
 }

@@ -21,7 +21,7 @@ void initializeEvalO(unsigned char b[TESTBSIZE][TESTBSIZE], unsigned char** boar
 bool testOrdenates(unsigned char b1[TESTBSIZE][TESTBSIZE], int b2[TESTBSIZE][TESTBSIZE])
 {
 	initializeEvalO(b1, testBoardE);
-	int ** av = avaliaBoard(testBoardE);
+	int ** av = avaliaBoard(testBoardE, MAXMIZEPLAYER);
 	for (size_t i = 0; i < TESTBSIZE; i++) {
 		for (size_t j = 0; j < TESTBSIZE; j++) {
 			if (av[i][j] != b2[i][j])
