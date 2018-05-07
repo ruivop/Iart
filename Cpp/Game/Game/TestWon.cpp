@@ -26,8 +26,7 @@ void initilizeVisited()
 	{
 		for (size_t j = 0; j < BSIZE; j++)
 		{
-			if(visited[i][j])
-				visited[i][j] = false;
+			visited[i][j] = false;
 		}
 	}
 }
