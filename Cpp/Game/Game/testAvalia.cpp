@@ -21,11 +21,11 @@ bool testeAval(unsigned char b[TESTBSIZE][TESTBSIZE], const int test_num, const 
 		pow(length * FACTORNONOBJECTIVE, EXPFACTOR));
 
 	initializeEvalB(b, testBoard);
-	bool ret = (avalia(testBoard, 1) == eval);
+	bool ret = (avalia(testBoard, 1, 0) == eval);
 
 	if (!ret)
 	{
-		cout << "error in test " << test_num << " expected: " << eval << " given: " << avalia(testBoard, 1) << endl;
+		cout << "error in test " << test_num << " expected: " << eval << " given: " << avalia(testBoard, 1, 0) << endl;
 	}
 	return ret;
 }

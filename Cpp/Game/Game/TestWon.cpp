@@ -237,7 +237,7 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 }
 
 
-int avalia(unsigned char** board, unsigned char piece) {
+int avalia(unsigned char** board, unsigned char piece, int depth) {
 	int acm = 0;
 	for (size_t i = 0; i < BSIZE; i++) {
 		for (size_t j = 0; j < BSIZE; j++) {
@@ -251,5 +251,9 @@ int avalia(unsigned char** board, unsigned char piece) {
 	reInUnvisited();
 	if (piece == WHITES)
 		acm = -acm;
+	if (acm > MAX)
+		return MAX - MAXDEPTH;
+	if (acm < MIN)
+		return MIN + MAXDEPTH;
 	return acm;
 }

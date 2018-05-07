@@ -10,4 +10,4 @@ void reInUnvisited();
 bool checkIfHas(unsigned char y, unsigned char x);
 bool findReach(unsigned char** board, unsigned char y, unsigned char x);
 bool hasWon(unsigned char** board, unsigned char piece);
-int avalia(unsigned char** board, unsigned char piece);
+int avalia(unsigned char** board, unsigned char piece, int depth);
