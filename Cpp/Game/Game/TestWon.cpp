@@ -172,31 +172,67 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 	unsigned char ybotomest = 0;
 	unsigned char xrigthes = 0;
 	unsigned char xleftest = BSIZE;
-
+	bool hasTop = false;
+	bool hasBotom = false;
+	bool hasRigth = false;
+	bool hasLeft = false;
 
 	const unsigned char piceToVisit = board[y][x];
 
-	visitPos(board, y, x);
+	unvisited[unvisitedPivot][0] = y;
+	unvisited[unvisitedPivot][1] = x;
+	visited[y][x] = true;
 
-	unvisitedPivot = 0;
-
+	//unvisitedLast + 1 is the size of the unvisited
 	while (unvisitedPivot != unvisitedLast + 1) {
 		unsigned char* a = unvisited[unvisitedPivot];
 
+		if (a[0] + 1 < BSIZE && !checkIfHas(a[0] + 1, a[1]) && board[a[0] + 1][a[1]] == piceToVisit) {
+			visited[a[0] + 1][a[1]] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0] + 1;
+			unvisited[unvisitedLast][1] = a[1];
+		}
+		if (a[0] - 1 >= 0 && !checkIfHas(a[0] - 1, a[1]) && board[a[0] - 1][a[1]] == piceToVisit) {
+			visited[a[0] - 1][a[1]] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0] - 1;
+			unvisited[unvisitedLast][1] = a[1];
+		}
+		if (a[1] + 1 < BSIZE && !checkIfHas(a[0], a[1] + 1) && board[a[0]][a[1] + 1] == piceToVisit) {
+			visited[a[0]][a[1] + 1] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0];
+			unvisited[unvisitedLast][1] = a[1] + 1;
+		}
+		if (a[1] - 1 >= 0 && !checkIfHas(a[0], a[1] - 1) && board[a[0]][a[1] - 1] == piceToVisit) {
+			visited[a[0]][a[1] - 1] = true;
+			unvisitedLast++;
+			unvisited[unvisitedLast][0] = a[0];
+			unvisited[unvisitedLast][1] = a[1] - 1;
+		}
 		ytopest = min(ytopest, a[0]);
 		ybotomest = max(ybotomest, a[0]);
 		xrigthes = max(xrigthes, a[1]);
 		xleftest = min(xleftest, a[1]);
+
 		unvisitedPivot++;
 	}
-	
-	int ret;
+
+	if (ytopest == 0)
+		hasTop = true;
+	if (ybotomest == BSIZE - 1)
+		hasBotom = true;
+	if (xleftest == 0)
+		hasLeft = true;
+	if (xrigthes == BSIZE - 1)
+		hasRigth = true;
+
+	int ret = 0;
 	if (piceToVisit == BLACKS)
-		ret = pow((ybotomest - ytopest)*FACTOROBJECTIVE, EXPFACTOR) +
-			pow((xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
+		ret = hasBotom && hasTop ? 2 * MAX : pow((ybotomest - ytopest)*FACTOROBJECTIVE + (xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
 	else
-		ret = -(pow((ybotomest - ytopest)*FACTORNONOBJECTIVE, EXPFACTOR) +
-		pow((xrigthes - xleftest)*FACTOROBJECTIVE, EXPFACTOR));
+		ret = hasRigth && hasLeft ? 2 * MIN : -(pow((ybotomest - ytopest)*FACTORNONOBJECTIVE + (xrigthes - xleftest)*FACTOROBJECTIVE, EXPFACTOR));
 	return ret;
 }
 
