@@ -252,8 +252,8 @@ int avalia(unsigned char** board, unsigned char piece, int depth) {
 	if (piece == WHITES)
 		acm = -acm;
 	if (acm > MAX)
-		return MAX - MAXDEPTH;
+		return MAX - depth;
 	if (acm < MIN)
-		return MIN + MAXDEPTH;
+		return MIN + depth;
 	return acm;
 }
