@@ -13,7 +13,7 @@ void initializeB(unsigned char b[TESTBSIZE][TESTBSIZE], unsigned char** board)
 }
 
 void testtestwon() {
-
+/*
 	cout << "testes do teste de tabuleiro ganho: " << endl;
 	unsigned char win1[TESTBSIZE][TESTBSIZE] =
    {{ 1, 2, 2, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0 },
@@ -321,6 +321,6 @@ void testtestwon() {
 
 	cout << "TEST ON isDiagnonalyAdj: sucsess: " << succsessDisgnolay << " unsucsess: " << unsuccsessDisgnolay << endl;
 	cout << "sucsess: " << sucsees << " unsucsess: " << unsucsess << endl;
-
+	*/
 }
 

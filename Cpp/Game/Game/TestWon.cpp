@@ -26,8 +26,7 @@ void initilizeVisited()
 	{
 		for (size_t j = 0; j < BSIZE; j++)
 		{
-			if(visited[i][j])
-				visited[i][j] = false;
+			visited[i][j] = false;
 		}
 	}
 }
@@ -54,7 +53,7 @@ void reInUnvisited() {
 bool checkIfHas(unsigned char y, unsigned char x) {
 	return visited[y][x];
 }
-
+/*
 bool findReach(unsigned char** board, unsigned char y, unsigned char x) {
 	bool hasTop = false;
 	bool hasBotom = false;
@@ -122,13 +121,20 @@ bool hasWon(unsigned char** board, unsigned char piece) {
 	initilizeVisited();
 	reInUnvisited();
 	return false;
-}
+}*/
 
 
-
-
-void visitPos(unsigned char** board, const unsigned char y, const unsigned char x)
+int visitPos(unsigned char** board, const unsigned char y, const unsigned char x)
 {
+	unsigned char ytopest = BSIZE;
+	unsigned char ybotomest = 0;
+	unsigned char xrigthes = 0;
+	unsigned char xleftest = BSIZE;
+	bool hasTop = false;
+	bool hasBotom = false;
+	bool hasRigth = false;
+	bool hasLeft = false;
+
 	const unsigned char piceToVisit = board[y][x];
 
 	unvisited[unvisitedPivot][0] = y;
@@ -163,51 +169,38 @@ void visitPos(unsigned char** board, const unsigned char y, const unsigned char 
 			unvisited[unvisitedLast][0] = a[0];
 			unvisited[unvisitedLast][1] = a[1] - 1;
 		}
-		unvisitedPivot++;
-	}
-	
-}
-
-int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
-	unsigned char ytopest = BSIZE;
-	unsigned char ybotomest = 0;
-	unsigned char xrigthes = 0;
-	unsigned char xleftest = BSIZE;
-
-
-	const unsigned char piceToVisit = board[y][x];
-
-	visitPos(board, y, x);
-
-	unvisitedPivot = 0;
-
-	while (unvisitedPivot != unvisitedLast + 1) {
-		unsigned char* a = unvisited[unvisitedPivot];
-
 		ytopest = min(ytopest, a[0]);
 		ybotomest = max(ybotomest, a[0]);
 		xrigthes = max(xrigthes, a[1]);
 		xleftest = min(xleftest, a[1]);
+
 		unvisitedPivot++;
 	}
+
+	if (ytopest == 0)
+		hasTop = true;
+	if (ybotomest == BSIZE - 1)
+		hasBotom = true;
+	if (xleftest == 0)
+		hasLeft = true;
+	if (xrigthes == BSIZE - 1)
+		hasRigth = true;
 	
-	int ret;
+	int ret = 0;
 	if (piceToVisit == BLACKS)
-		ret = pow((ybotomest - ytopest)*FACTOROBJECTIVE, EXPFACTOR) +
-			pow((xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
+		ret = hasBotom && hasTop ? 2 * MAX : pow((ybotomest - ytopest)*FACTOROBJECTIVE + (xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
 	else
-		ret = -(pow((ybotomest - ytopest)*FACTORNONOBJECTIVE, EXPFACTOR) +
-		pow((xrigthes - xleftest)*FACTOROBJECTIVE, EXPFACTOR));
+		ret = hasRigth && hasLeft ? 2 * MIN : -(pow((ybotomest - ytopest)*FACTORNONOBJECTIVE + (xrigthes - xleftest)*FACTOROBJECTIVE, EXPFACTOR));
 	return ret;
 }
 
 
 int avalia(unsigned char** board, unsigned char piece) {
 	int acm = 0;
-	for (size_t i = 0; i < BSIZE; i++) {
-		for (size_t j = 0; j < BSIZE; j++) {
+	for (unsigned char i = 0; i < BSIZE; i++) {
+		for (unsigned char j = 0; j < BSIZE; j++) {
 			if (board[i][j] != EMPTY && !checkIfHas(i, j)) {
-				acm += evaluateReach(board, static_cast<unsigned char>(i), static_cast<unsigned char>(j));
+				acm += visitPos(board, i, j);
 				reInUnvisited();
 			}
 		}

@@ -4,6 +4,7 @@
 /*array of */
 int* ** orders = new int**[MAXDEPTH];
 int** scores = new int*[BSIZE];
+Quadrants* numMorePieces = new Quadrants[QUADRANTS];
 extern unsigned char* lastPlayed;
 extern int* FirstOrders;
 
@@ -86,6 +87,8 @@ int** ordenate(unsigned char ** b, int depth, unsigned char player)
 	return ret;
 }
 
+bool wayToSort(Quadrants i, Quadrants j) { return i.value > j.value; }
+
 int** avaliaBoard(unsigned char ** b, unsigned char player)
 {
 	for (size_t i = 0; i < BSIZE; i++) {
@@ -101,6 +104,35 @@ int** avaliaBoard(unsigned char ** b, unsigned char player)
 			}
 		}
 	}
+
+
+
+	for (int i = 0; i < 4; i++)
+	{
+		numMorePieces[i].index = i;
+		numMorePieces[i].value = 0;
+	}
+
+	for (size_t i = 0; i < BSIZE; i++)
+		for (size_t j = 0; j < BSIZE; j++)
+			if (b[i][j] != EMPTY)
+				numMorePieces[2 * (i / HALFBSIZE) + j / HALFBSIZE].value++;
+
+	sort(numMorePieces, numMorePieces + QUADRANTS, wayToSort);
+
+	for (size_t i = 0; i < BSIZE; i++) {
+		for (size_t j = 0; j < BSIZE; j++) {
+			if (scores[i][j] != -1) {
+				if (2 * (i / HALFBSIZE) + j / HALFBSIZE == numMorePieces[0].index)
+					scores[i][j] += 3;
+				else if (2 * (i / HALFBSIZE) + j / HALFBSIZE == numMorePieces[1].index)
+					scores[i][j] += 2;
+				else if (2 * (i / HALFBSIZE) + j / HALFBSIZE == numMorePieces[2].index)
+					scores[i][j] += 1;
+			}
+		}
+	}
+
 	return scores;
 }
 
