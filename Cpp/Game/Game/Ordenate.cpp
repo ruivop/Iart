@@ -68,6 +68,8 @@ void get_next_pos(int depth, Play* play)
 	ant->next_play = play;
 }
 
+bool sortPlays(Play i, Play j) { return i.value > j.value; }
+
 int** ordenate(unsigned char ** b, int depth, unsigned char player)
 {
 	int ** ret = avaliaBoard(b, player);
@@ -96,10 +98,10 @@ int** ordenate(unsigned char ** b, int depth, unsigned char player)
 				b[i][j] = player;
 				for (unsigned int k = i; k < BSIZE; k++) {
 					for (unsigned int y = 0; y < BSIZE; y++) {
-						if (scores[k][y] != -1)
+						if (b[k][y] == EMPTY)
 						{
 							b[k][y] = player;
-							if (!isDiagnonalyAdj(b, i, j, player)) {
+							if (!isDiagnonalyAdj(b, i, j, player) && !isDiagnonalyAdj(b, k, y, player)) {
 								if ((k == i && y == j + 1) || (k == i + 1 && y == j) || (k == i + 1 && y == j + 1))
 									orders[depth][ordersIndex].value = scores[i][j] + scores[k][y] + 100;
 								else
@@ -108,7 +110,7 @@ int** ordenate(unsigned char ** b, int depth, unsigned char player)
 								orders[depth][ordersIndex].move_first->j = j;
 								orders[depth][ordersIndex].move_second->i = k;
 								orders[depth][ordersIndex].move_second->j = y;
-								get_next_pos(depth, &orders[depth][ordersIndex]);
+								//get_next_pos(depth, &orders[depth][ordersIndex]);
 								ordersIndex++;
 							}
 							b[k][y] = EMPTY;
@@ -119,6 +121,7 @@ int** ordenate(unsigned char ** b, int depth, unsigned char player)
 			}
 		}
 	}
+	std::sort(orders[depth], orders[depth] + ordersIndex, sortPlays);
 	return ret;
 }
 

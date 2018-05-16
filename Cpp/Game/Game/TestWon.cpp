@@ -7,6 +7,7 @@ bool** visited = new bool*[BSIZE];
 unsigned char** unvisited = new unsigned char*[BSIZE * BSIZE];
 int unvisitedPivot = 0;
 int unvisitedLast = 0;
+extern float secondsAvalia;
 
 void initilizeTestWon()
 {
@@ -123,9 +124,7 @@ bool hasWon(unsigned char** board, unsigned char piece) {
 	return false;
 }
 
-
-
-
+/*
 void visitPos(unsigned char** board, const unsigned char y, const unsigned char x)
 {
 	const unsigned char piceToVisit = board[y][x];
@@ -165,17 +164,13 @@ void visitPos(unsigned char** board, const unsigned char y, const unsigned char 
 		unvisitedPivot++;
 	}
 	
-}
+}*/
 
 int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 	unsigned char ytopest = BSIZE;
 	unsigned char ybotomest = 0;
 	unsigned char xrigthes = 0;
 	unsigned char xleftest = BSIZE;
-	bool hasTop = false;
-	bool hasBotom = false;
-	bool hasRigth = false;
-	bool hasLeft = false;
 
 	const unsigned char piceToVisit = board[y][x];
 
@@ -187,25 +182,25 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 	while (unvisitedPivot != unvisitedLast + 1) {
 		unsigned char* a = unvisited[unvisitedPivot];
 
-		if (a[0] + 1 < BSIZE && !checkIfHas(a[0] + 1, a[1]) && board[a[0] + 1][a[1]] == piceToVisit) {
+		if (a[0] + 1 < BSIZE && !visited[a[0] + 1][a[1]] && board[a[0] + 1][a[1]] == piceToVisit) {
 			visited[a[0] + 1][a[1]] = true;
 			unvisitedLast++;
 			unvisited[unvisitedLast][0] = a[0] + 1;
 			unvisited[unvisitedLast][1] = a[1];
 		}
-		if (a[0] - 1 >= 0 && !checkIfHas(a[0] - 1, a[1]) && board[a[0] - 1][a[1]] == piceToVisit) {
+		if (a[0] - 1 >= 0 && !visited[a[0] - 1][a[1]] && board[a[0] - 1][a[1]] == piceToVisit) {
 			visited[a[0] - 1][a[1]] = true;
 			unvisitedLast++;
 			unvisited[unvisitedLast][0] = a[0] - 1;
 			unvisited[unvisitedLast][1] = a[1];
 		}
-		if (a[1] + 1 < BSIZE && !checkIfHas(a[0], a[1] + 1) && board[a[0]][a[1] + 1] == piceToVisit) {
+		if (a[1] + 1 < BSIZE && !visited[a[0]][a[1] + 1] && board[a[0]][a[1] + 1] == piceToVisit) {
 			visited[a[0]][a[1] + 1] = true;
 			unvisitedLast++;
 			unvisited[unvisitedLast][0] = a[0];
 			unvisited[unvisitedLast][1] = a[1] + 1;
 		}
-		if (a[1] - 1 >= 0 && !checkIfHas(a[0], a[1] - 1) && board[a[0]][a[1] - 1] == piceToVisit) {
+		if (a[1] - 1 >= 0 && !visited[a[0]][a[1] - 1] && board[a[0]][a[1] - 1] == piceToVisit) {
 			visited[a[0]][a[1] - 1] = true;
 			unvisitedLast++;
 			unvisited[unvisitedLast][0] = a[0];
@@ -218,6 +213,11 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 
 		unvisitedPivot++;
 	}
+	
+	bool hasTop = false;
+	bool hasBotom = false;
+	bool hasRigth = false;
+	bool hasLeft = false;
 
 	if (ytopest == 0)
 		hasTop = true;
@@ -228,7 +228,7 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 	if (xrigthes == BSIZE - 1)
 		hasRigth = true;
 
-	int ret = 0;
+	int ret;
 	if (piceToVisit == BLACKS)
 		ret = hasBotom && hasTop ? 2 * MAX : pow((ybotomest - ytopest)*FACTOROBJECTIVE + (xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
 	else
@@ -236,13 +236,25 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 	return ret;
 }
 
+bool checkIfIsAlone(unsigned char** board, unsigned char i, unsigned char j)
+{
+	if (i + 1 < BSIZE && board[i + 1][j] != EMPTY)
+		return false;
+	if (i - 1 >= 0 && board[i - 1][j] != EMPTY)
+		return false;
+	if (j + 1 < BSIZE && board[i][j+1] != EMPTY)
+		return false;
+	if (j - 1 >= 0 && board[i][j-1] != EMPTY)
+		return false;
+	return true;
+}
 
 int avalia(unsigned char** board, unsigned char piece, int depth) {
 	int acm = 0;
-	for (size_t i = 0; i < BSIZE; i++) {
-		for (size_t j = 0; j < BSIZE; j++) {
-			if (board[i][j] != EMPTY && !checkIfHas(i, j)) {
-				acm += evaluateReach(board, static_cast<unsigned char>(i), static_cast<unsigned char>(j));
+	for (unsigned char i = 0; i < BSIZE; i++) {
+		for (unsigned char j = 0; j < BSIZE; j++) {
+			if (board[i][j] != EMPTY && !visited[i][j] && !checkIfIsAlone(board, i, j)) {
+				acm += evaluateReach(board, i, j);
 				reInUnvisited();
 			}
 		}
