@@ -2,10 +2,12 @@
 #include "Ordenate.h"
 
 /*array of */
-int* ** orders = new int**[MAXDEPTH];
+Play** orders = new Play*[MAXDEPTH];
+int ordersIndex = 0;
 int** scores = new int*[BSIZE];
 extern unsigned char* lastPlayed;
-extern int* FirstOrders;
+extern Play* FirstOrders[MAXDEPTH];
+extern Play* LastOrders[MAXDEPTH];
 Quadrants* numMorePieces = new Quadrants[4];
 
 int ifNeibLastPlayed(unsigned char l, unsigned char c);
@@ -14,73 +16,106 @@ void initializeOrdenate()
 {
 	for (int i = 0; i < MAXDEPTH; i++)
 	{
-		orders[i] = new int*[BSIZE];
-		for (int j = 0; j < BSIZE; j++)
-		{
-			orders[i][j] = new int[BSIZE];
-			for (int u = 0; u < BSIZE; u++)
-			{
-				orders[i][j][u] = -1;
-			}
-		}
+		orders[i] = new Play[BSIZE * BSIZE * BSIZE * BSIZE / 4];
 	}
 	for (int i = 0; i < BSIZE; ++i)
 		scores[i] = new int[BSIZE];
 
 }
 
-void get_next_pos(int depth, unsigned int l, unsigned int c)
+void get_next_pos(int depth, Play* play)
 {
 
-	int indiceVisitando = FirstOrders[depth];
+	Play* moveVisitando = FirstOrders[depth];
 
-	if (indiceVisitando == -1) {
-		FirstOrders[depth] = l * BSIZE + c;
+	if (moveVisitando == nullptr) {
+		play->previous_play = nullptr;
+		play->next_play = nullptr;
+		FirstOrders[depth] = play;
+		LastOrders[depth] = play;
 		return;
 	}
-	int ant = -1;
+	Play* ant = nullptr;
 
-	while (orders[depth][indiceVisitando / BSIZE][indiceVisitando%BSIZE] != -1)
+	while (moveVisitando != nullptr)
 	{
 		//se o score do que estamos a querer por for maior do que o que estamos a visitar, entao poe o que estamos querer por na posicao do que estamos a visitar
-		if (scores[l][c] > scores[indiceVisitando / BSIZE][indiceVisitando%BSIZE])
+		if (play->value >= moveVisitando->value)
 		{
-			//se o anterioir for igual a -1 e porque temos de por no primeiro valor
-			if (ant == -1) {
-				orders[depth][l][c] = FirstOrders[depth];
-				FirstOrders[depth] = l * BSIZE + c;
+			//se o anterior for nulo e porque temos de por no primeiro valor
+			if (ant == nullptr) {
+				play->next_play = FirstOrders[depth];
+				play->previous_play = nullptr;
+				FirstOrders[depth]->previous_play = play;
+				FirstOrders[depth] = play;
 			}
 			else {
-				orders[depth][ant / BSIZE][ant%BSIZE] = l * BSIZE + c;
-				orders[depth][l][c] = indiceVisitando;
+				play->next_play = moveVisitando;
+				play->previous_play = ant;
+				ant->next_play = play;
+				moveVisitando->previous_play = play;
 			}
 			return;
 		}
-		ant = indiceVisitando;
+		ant = moveVisitando;
 
-		indiceVisitando = orders[depth][indiceVisitando / BSIZE][indiceVisitando%BSIZE];
+		moveVisitando = moveVisitando->next_play;
 	}
 
-	orders[depth][indiceVisitando / BSIZE][indiceVisitando%BSIZE] = l * BSIZE + c;
-	orders[depth][l][c] = -1;
+	LastOrders[depth] = play;
+	play->next_play = nullptr;
+	play->previous_play = ant;
+	ant->next_play = play;
 }
 
 int** ordenate(unsigned char ** b, int depth, unsigned char player)
 {
 	int ** ret = avaliaBoard(b, player);
 
-	for (unsigned int i = 0; i < BSIZE; i++) {
-		for (unsigned int j = 0; j < BSIZE; j++) {
-			orders[depth][i][j] = -1;
+	/*cout << endl << "    ";
+	for (size_t i = 0; i < BSIZE; i++) {
+		cout << "|" << setw(4) << i;
+	}
+	for (size_t i = 0; i < BSIZE; i++) {
+		cout << endl << setw(3) << i;
+		for (size_t j = 0; j < BSIZE; j++) {
+			cout << " | " << setw(2) << ret[i][j];
 		}
 	}
-	FirstOrders[depth] = -1;
+	cout << endl;*/
+
+
+	FirstOrders[depth] = nullptr;
+	LastOrders[depth] = nullptr;
+	ordersIndex = 0;
 
 	for (unsigned int i = 0; i < BSIZE; i++) {
 		for (unsigned int j = 0; j < BSIZE; j++) {
-			if (scores[i][j] != -1)
+			if (b[i][j] == EMPTY)
 			{
-				get_next_pos(depth, i, j);
+				b[i][j] = player;
+				for (unsigned int k = i; k < BSIZE; k++) {
+					for (unsigned int y = 0; y < BSIZE; y++) {
+						if (scores[k][y] != -1)
+						{
+							b[k][y] = player;
+							if (!isDiagnonalyAdj(b, i, j, player)) {
+								if ((k == i && y == j + 1) || (k == i + 1 && y == j) || (k == i + 1 && y == j + 1))
+									orders[depth][ordersIndex].value = scores[i][j] + scores[k][y] + 100;
+								else
+									orders[depth][ordersIndex].value = scores[i][j] + scores[k][y];
+								orders[depth][ordersIndex].move_first->i = i;
+								orders[depth][ordersIndex].move_first->j = j;
+								orders[depth][ordersIndex].move_second->i = k;
+								orders[depth][ordersIndex].move_second->j = y;
+								get_next_pos(depth, &orders[depth][ordersIndex]);
+								ordersIndex++;
+							}
+							b[k][y] = EMPTY;
+						}
+					}
+				}
+				b[i][j] = EMPTY;
 			}
 		}
 	}
@@ -116,7 +151,7 @@ int** avaliaBoard(unsigned char ** b, unsigned char player)
 			if (b[i][j] != EMPTY)
 				numMorePieces[2 * (i / 7) + j / 7].value++;
 
-	sort(numMorePieces, numMorePieces + 4, wayToSort);
+	std::sort(numMorePieces, numMorePieces + 4, wayToSort);
 
 	for (size_t i = 0; i < BSIZE; i++) {
 		for (size_t j = 0; j < BSIZE; j++) {
