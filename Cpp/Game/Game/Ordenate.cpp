@@ -2,21 +2,23 @@
 #include "Ordenate.h"
 
 /*array of */
-Play** orders = new Play*[MAXDEPTH];
-int ordersIndex = 0;
+Play** orders = new Play*[MAXMAXDEPTH];
+int ordersIndex[MAXMAXDEPTH];
 int** scores = new int*[BSIZE];
 extern unsigned char* lastPlayed;
-extern Play* FirstOrders[MAXDEPTH];
-extern Play* LastOrders[MAXDEPTH];
+extern int MAXDEPTH;
+extern Play* FirstOrders[MAXMAXDEPTH];
+extern Play* LastOrders[MAXMAXDEPTH];
 Quadrants* numMorePieces = new Quadrants[4];
 
 int ifNeibLastPlayed(unsigned char l, unsigned char c);
 
 void initializeOrdenate()
 {
-	for (int i = 0; i < MAXDEPTH; i++)
+	for (int i = 0; i < MAXMAXDEPTH; i++)
 	{
 		orders[i] = new Play[BSIZE * BSIZE * BSIZE * BSIZE / 4];
+		ordersIndex[i] = 0;
 	}
 	for (int i = 0; i < BSIZE; ++i)
 		scores[i] = new int[BSIZE];
@@ -89,7 +91,7 @@ int** ordenate(unsigned char ** b, int depth, unsigned char player)
 
 	FirstOrders[depth] = nullptr;
 	LastOrders[depth] = nullptr;
-	ordersIndex = 0;
+	ordersIndex[depth] = 0;
 
 	for (unsigned int i = 0; i < BSIZE; i++) {
 		for (unsigned int j = 0; j < BSIZE; j++) {
@@ -103,15 +105,14 @@ int** ordenate(unsigned char ** b, int depth, unsigned char player)
 							b[k][y] = player;
 							if (!isDiagnonalyAdj(b, i, j, player) && !isDiagnonalyAdj(b, k, y, player)) {
 								if ((k == i && y == j + 1) || (k == i + 1 && y == j) || (k == i + 1 && y == j + 1))
-									orders[depth][ordersIndex].value = scores[i][j] + scores[k][y] + 100;
+									orders[depth][ordersIndex[depth]].value = scores[i][j] + scores[k][y] + 100;
 								else
-									orders[depth][ordersIndex].value = scores[i][j] + scores[k][y];
-								orders[depth][ordersIndex].move_first->i = i;
-								orders[depth][ordersIndex].move_first->j = j;
-								orders[depth][ordersIndex].move_second->i = k;
-								orders[depth][ordersIndex].move_second->j = y;
-								//get_next_pos(depth, &orders[depth][ordersIndex]);
-								ordersIndex++;
+									orders[depth][ordersIndex[depth]].value = scores[i][j] + scores[k][y];
+								orders[depth][ordersIndex[depth]].move_first->i = i;
+								orders[depth][ordersIndex[depth]].move_first->j = j;
+								orders[depth][ordersIndex[depth]].move_second->i = k;
+								orders[depth][ordersIndex[depth]].move_second->j = y;
+								ordersIndex[depth] += 1;
 							}
 							b[k][y] = EMPTY;
 						}
@@ -121,7 +122,7 @@ int** ordenate(unsigned char ** b, int depth, unsigned char player)
 			}
 		}
 	}
-	std::sort(orders[depth], orders[depth] + ordersIndex, sortPlays);
+	std::sort(orders[depth], orders[depth] + ordersIndex[depth], sortPlays);
 	return ret;
 }
 

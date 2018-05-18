@@ -218,6 +218,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Ordenate.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="TestOredenate.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="testAvalia.h" />
@@ -229,6 +230,7 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Ordenate.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="testAvalia.cpp" />
     <ClCompile Include="TestOredenate.cpp" />
     <ClCompile Include="TestWonTest.cpp" />

@@ -8,6 +8,8 @@ unsigned char** unvisited = new unsigned char*[BSIZE * BSIZE];
 int unvisitedPivot = 0;
 int unvisitedLast = 0;
 extern float secondsAvalia;
+extern unsigned char playerColor;
+extern unsigned char pcColor;
 
 void initilizeTestWon()
 {
@@ -229,11 +231,17 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 		hasRigth = true;
 
 	int ret;
-	if (piceToVisit == BLACKS)
-		ret = hasBotom && hasTop ? 2 * MAX : pow((ybotomest - ytopest)*FACTOROBJECTIVE + (xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
-	else
-		ret = hasRigth && hasLeft ? 2 * MIN : -(pow((ybotomest - ytopest)*FACTORNONOBJECTIVE + (xrigthes - xleftest)*FACTOROBJECTIVE, EXPFACTOR));
-	return ret;
+	
+	if (piceToVisit == BLACKS) {
+		if (hasBotom && hasTop)
+			return 2 * MAX;
+		return pow((ybotomest - ytopest)*FACTOROBJECTIVE + (xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
+	}
+	else {
+		if (hasRigth && hasLeft)
+			return 2 * MIN;
+		return -(pow((ybotomest - ytopest)*FACTORNONOBJECTIVE + (xrigthes - xleftest)*FACTOROBJECTIVE, EXPFACTOR));
+	}
 }
 
 bool checkIfIsAlone(unsigned char** board, unsigned char i, unsigned char j)

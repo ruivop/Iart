@@ -3,6 +3,7 @@
 #include "TestWonTest.h"
 #include "TestOredenate.h"
 #include "Ordenate.h"
+#include "Server.h"
 
 struct Move
 {
@@ -20,3 +21,6 @@ struct Play
 
 bool isDiagnonalyAdj(unsigned char** board, int i, int j, unsigned char colour);
 void mostrar(unsigned char** board);
+bool pcTurn(unsigned char** board);
+bool playerTurn(unsigned char** board);
+Play* choseNextPlay(unsigned char** board);
