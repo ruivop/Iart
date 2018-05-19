@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Whirlwind</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<style media="screen">
+      #board {
+        border-collapse: collapse;
+        display: inline-block;
+      }
+      .properties{
+        display: inline-block;
+        vertical-align:top;
+      }
+      table, th, td {
+        border: 1px solid black;
+      }
+
+      td {
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        transition: background-color 200ms linear;
+      }
+      .numberAnotation {
+        background-color: rgb(153, 204, 255);
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="display-2">Whirlwind</h1>
+    <table id="board">
+    </table>
+    <div class="properties display-4">
+      <div>
+        <select class="form-control" id="modeSelector">
+          <option value="pvp">Player vs Player</option>
+          <option value="pvc">Player (blacks) vs. Computer (whites)</option>
+		  <option value="cvp">Computer (blacks) vs. Player (whites)</option>
+          <option value="cvc">Computer vs Computer</option>
+        </select>
+		<select class="form-control" id="minimaxHaeadSelector" style="display: none;">
+          <option value="1">1 PLAY AHEAD</option>
+          <option selected value="2">2 PLAY AHEAD</option>
+          <option value="3">3 PLAY AHEAD</option>
+        </select>
+      </div>
+      <div>
+        <span>State: </span> <span id="turnplay"></span>
+      </div>
+      <div>
+        <span>Last play was in: </span> <span id="playingIn"></span>
+      </div>
+      <div>
+        <span>Number of nodes visited: </span> <span id="minimaxDepth"></span>
+      </div>
+      <div>
+        <span>Time processing: </span> <span id="minimaxNumNodes"></span>
+      </div>
+      <div>
+        <span>Confidance: </span> <span id="minimaxConfidance"></span>
+      </div>
+    </div>
+	
+	<div>
+        <span>Info: </span> <span id="info">Click in the tiles to place a piece</span>
+     </div>
+	 <button type="button" class="btn btn-success" id="newGame">New Game</button>
+
+    <script src="iart-frontend.js"></script>
+  </body>
+</html>
