@@ -215,31 +215,11 @@ int evaluateReach(unsigned char** board, unsigned char y, unsigned char x) {
 
 		unvisitedPivot++;
 	}
-	
-	bool hasTop = false;
-	bool hasBotom = false;
-	bool hasRigth = false;
-	bool hasLeft = false;
 
-	if (ytopest == 0)
-		hasTop = true;
-	if (ybotomest == BSIZE - 1)
-		hasBotom = true;
-	if (xleftest == 0)
-		hasLeft = true;
-	if (xrigthes == BSIZE - 1)
-		hasRigth = true;
-
-	int ret;
-	
 	if (piceToVisit == BLACKS) {
-		if (hasBotom && hasTop)
-			return 2 * MAX;
 		return pow((ybotomest - ytopest)*FACTOROBJECTIVE + (xrigthes - xleftest)*FACTORNONOBJECTIVE, EXPFACTOR);
 	}
 	else {
-		if (hasRigth && hasLeft)
-			return 2 * MIN;
 		return -(pow((ybotomest - ytopest)*FACTORNONOBJECTIVE + (xrigthes - xleftest)*FACTOROBJECTIVE, EXPFACTOR));
 	}
 }
@@ -271,9 +251,5 @@ int avalia(unsigned char** board, unsigned char piece, int depth) {
 	reInUnvisited();
 	if (piece == WHITES)
 		acm = -acm;
-	if (acm > MAX)
-		return MAX - depth;
-	if (acm < MIN)
-		return MIN + depth;
 	return acm;
 }
