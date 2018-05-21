@@ -76,13 +76,13 @@ function createBoard() {
                 cell.onmouseover = function(event) {
                     var i = parseInt(event.target.id / boardSize);
                     var j = event.target.id % boardSize;
-                    if (canplay(i, j))
+                    if (boardarr[i][j] == 0 && canplay(i, j))
                         event.target.style.backgroundColor = turn == 1 ? coulorBacks : coulorWhites;
                 };
                 cell.onmouseout = function(event) {
                     var i = parseInt(event.target.id / boardSize);
                     var j = event.target.id % boardSize;
-                    if (canplay(i, j))
+                    if (boardarr[i][j] == 0 && canplay(i, j))
                         event.target.style.backgroundColor = coulourCanSeletect;
                 };
                 cell.onclick = function(event) {
@@ -116,18 +116,18 @@ function createBoard() {
         board.appendChild(row);
     }
     drawBoard();
-	
+
 	$('#newGame').on('click', createNewGame);
-	
+
 	$('#modeSelector').change(function(){
         mode = $(this).find("option:selected").attr('value');
 		if(mode != "pvp")
 			document.getElementById("minimaxHaeadSelector").style.display = "block";
 		else
 			document.getElementById("minimaxHaeadSelector").style.display = "none";
-		playBlacks();
+      goToNextState();
     });
-	
+
 	$('#minimaxHaeadSelector').change(function(){
         depth = parseInt($(this).find("option:selected").attr('value'));
     });
@@ -135,12 +135,14 @@ function createBoard() {
 
 
 function canplay(i, j) {
-  if(boardarr[i][j] ==0)
+  if(boardarr[i][j] == 0){
     if (times == 0 && isInFirstMoves(i, j))
         return true;
     else if (times == 1 && isInSecondMoves(i, j))
         return true;
-    return false;
+  }else if(times == 1 && isInFirstMoves(i, j) && isInSecondMoves(i, j))
+  	return true;
+  return false;
 }
 
 function isDiagnonalyAdj(i, j, colour) {
@@ -194,6 +196,13 @@ function createvalidMoves() {
             }
         }
     }
+    for (var i1 = 0; i1 < boardarr.length; i1++) {
+        for (var j1 = 0; j1 < boardarr.length; j1++) {
+            if (boardarr[i1][j1] == 0 && !isDiagnonalyAdj(i1, j1, turn)) {
+                validMoves.push([i1, j1, i1, j1]);
+            }
+        }
+    }
 }
 
 function isInFirstMoves(is, js) {
@@ -242,17 +251,14 @@ function sendRequest(jsonSend){
 	if(resp.Response == "has_won"){
 		if(resp.Value) {
 		//make a new array
-		
+
 		document.getElementById("turnplay").innerHTML = "Game Won by " + (turn == 2 ? "Whites" : "Blacks");
 		document.getElementById("info").innerHTML = "To start a new game (whith blacks) click in the button";
 		playing = false;
 		} else {
 			turn = (turn % 2) + 1;
-			if(turn == 1)
-				playBlacks();
-			else
-				playWites();
-            createvalidMoves();
+			goToNextState();
+      createvalidMoves();
 		}
 	} else {
 		console.log(resp);
@@ -260,16 +266,21 @@ function sendRequest(jsonSend){
 		fistMove[1]=resp.j1;
 		secondMove[0]=resp.i2;
         secondMove[1]=resp.j2;
-		document.getElementById("playingIn").innerHTML = fistMove[0] + " - " + fistMove[1] + " and " + parseInt(secondMove[0]) + " - " + parseInt(secondMove[1]);        
-		boardarr[resp.i1][resp.j1] = turn;
+		document.getElementById("playingIn").innerHTML = fistMove[0] + " - " + fistMove[1] + " and " + parseInt(secondMove[0]) + " - " + parseInt(secondMove[1]);
+    document.getElementById("minimaxDepth").innerHTML = resp.numNodes;
+    document.getElementById("ramification").innerHTML = resp.ramification;
+    document.getElementById("minimaxNumNodes").innerHTML = resp.time;
+    document.getElementById("minimaxConfidance").innerHTML = resp.confidance;
+    boardarr[resp.i1][resp.j1] = turn;
 		boardarr[resp.i2][resp.j2] = turn;
 		checkEndGame();
 		drawBoard();
 	}
-	
+
    };
    xmlhttp.onerror = function() {
      console.log('There was an error!');
+     document.getElementById("turnplay").innerHTML = "No server Found!";
    };
   xmlhttp.send(JSON.stringify(jsonSend));
 }
@@ -283,7 +294,7 @@ function pc_play(color){
 	var jsonSend = {Request:"pc_play", Board:boardarr, player:color, depth:depth};
 	sendRequest(jsonSend);
 }
- 
+
  function createNewGame(){
 	for (var i = 0; i < boardinit.length; i++)
 		boardarr[i] = boardinit[i].slice();
@@ -294,8 +305,16 @@ function pc_play(color){
 	document.getElementById("playingIn").innerHTML = "";
 	document.getElementById("info").innerHTML = "Click in the tiles to place a piece";
 	drawBoard();
+  playBlacks();
  }
- 
+
+function goToNextState(){
+  if(turn == 1)
+    playBlacks();
+  else
+    playWites();
+}
+
 function playBlacks(){
 	playing = false;
 	if(mode == "pvp"){
